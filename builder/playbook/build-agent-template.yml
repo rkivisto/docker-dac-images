@@ -1,0 +1,31 @@
+---
+- hosts: localhost
+  connection: local
+  become: true
+  gather_facts: yes
+  tasks:
+    # android_base.rb
+    - file: path=/opt/android state=directory mode=0755 owner=root group=root
+    - file: path=/opt/android/android-sdk-linux state=directory mode=0755 owner=root group=root
+
+    # jenkinshome.rb
+    - name: Create base layout
+      file: "dest={{ item }} mode=0755 owner=root group=root state=directory"
+      with_items:
+        - /workspace
+
+    - group: gid=501 name=jenkins state=present
+    - user: uid=501 name=jenkins group=jenkins state=present
+
+    - name: Create jenkins home
+      file: "dest={{ item.name }} mode={{ item.mode }} owner=jenkins group=jenkins state=directory"
+      with_items:
+        - { name: "/home/jenkins",      mode: "0744" }
+        - { name: "/home/jenkins/.ssh", mode: "0700" }
+        - { name: "/home/jenkins/tmp",  mode: "0744" }
+        - { name: "/home/jenkins/bin",  mode: "0744" }
+        - { name: "/home/jenkins",      mode: "0744" }
+        - { name: "/scratch/jenkins",   mode: "0755" }
+
+    - file: state=directory path=/tmp/.X11-unix mode=01777 owner=root group=root
+    - file: state=directory path=/tmp mode=01777 owner=root group=root

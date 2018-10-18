@@ -1,0 +1,11 @@
+FROM fedora:25
+
+RUN dnf upgrade -y --refresh
+RUN dnf group -y install "Minimal Install"
+RUN dnf group -y install "Development Tools"
+RUN dnf group -y install "C Development Tools and Libraries"
+
+COPY builder /tmp/builder
+
+RUN /tmp/builder/build-f25.sh \
+    && rm -rf /tmp/builder
