@@ -27,7 +27,6 @@ ARG user=jenkins
 ARG group=jenkins
 ARG uid=10000
 ARG gid=10000
-ENV MAVEN_VERSION 3.2.5
 
 ENV HOME /home/${user}
 RUN groupadd -g ${gid} ${group}
@@ -37,6 +36,8 @@ RUN dnf upgrade -y --refresh
 RUN dnf group -y install "Minimal Install"
 RUN dnf group -y install "Development Tools"
 RUN dnf group -y install "C Development Tools and Libraries"
+# already installed by /tmp/builder/build-f25.sh
+#RUN dnf group -y install java-1.8.0-openjdk.x86_64
 
 COPY builder /tmp/builder
 
@@ -48,10 +49,6 @@ ARG AGENT_WORKDIR=/home/${user}/agent
 RUN curl --create-dirs -fsSLo /usr/share/jenkins/slave.jar https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${VERSION}/remoting-${VERSION}.jar \
 && chmod 755 /usr/share/jenkins \
 && chmod 644 /usr/share/jenkins/slave.jar
-
-RUN curl -sSL http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar xzf - -C /usr/share \
-&& mv /usr/share/apache-maven-$MAVEN_VERSION /usr/share/maven \
-&& ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
 
 USER ${user}
 ENV AGENT_WORKDIR=${AGENT_WORKDIR}
