@@ -36,7 +36,8 @@ RUN dnf upgrade -y --refresh
 RUN dnf group -y install "Minimal Install"
 RUN dnf group -y install "Development Tools"
 RUN dnf group -y install "C Development Tools and Libraries"
-RUN dnf group -y install java-1.8.0-openjdk.x86_64
+# already installed by /tmp/builder/build-f25.sh
+#RUN dnf group -y install java-1.8.0-openjdk.x86_64
 
 COPY builder /tmp/builder
 
